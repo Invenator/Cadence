@@ -37,6 +37,14 @@ export function NoteCard({
   // During a drag, position/size updates go straight to the DOM via this ref;
   // reducer state is committed once on release, so the notes array does not
   // re-render on every pointermove.
+  // Position is clamped so the note's full box stays inside the viewport -
+  // without an upper clamp a note dragged past the right/bottom edge is
+  // unrecoverable (no scroll/pan).
+  const clampX = (x: number) =>
+    Math.min(Math.max(0, x), Math.max(0, window.innerWidth - note.width));
+  const clampY = (y: number) =>
+    Math.min(Math.max(0, y), Math.max(0, window.innerHeight - note.height));
+
   const startMove = usePointerDrag({
     onStart: () => {
       setDragging(true);
@@ -46,8 +54,8 @@ export function NoteCard({
     onMove: ({ dx, dy, clientX, clientY }) => {
       const el = ref.current;
       if (el) {
-        el.style.left = `${note.x + dx}px`;
-        el.style.top = `${note.y + dy}px`;
+        el.style.left = `${clampX(note.x + dx)}px`;
+        el.style.top = `${clampY(note.y + dy)}px`;
       }
       onDragOverTrashChange(overTrash(clientX, clientY), true);
     },
@@ -57,7 +65,7 @@ export function NoteCard({
       if (overTrash(clientX, clientY)) {
         onDelete();
       } else {
-        onMoveEnd(Math.max(0, note.x + dx), Math.max(0, note.y + dy));
+        onMoveEnd(clampX(note.x + dx), clampY(note.y + dy));
       }
     },
   });
