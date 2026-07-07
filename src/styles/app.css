@@ -139,11 +139,21 @@ body {
   overflow: hidden;
   overflow-wrap: break-word;
   outline: none;
+  cursor: inherit;
+  user-select: none;
+}
+
+.note.editing {
+  cursor: auto;
+}
+
+.note.editing .note-text {
   cursor: text;
+  user-select: text;
 }
 
 .note-text:empty::before {
-  content: 'Write something…';
+  content: 'Double-click to write…';
   color: rgba(37, 48, 68, 0.38);
 }
 
