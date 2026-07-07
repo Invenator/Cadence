@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Note } from '../state/types';
 import { NOTE_DEFAULTS } from '../state/types';
 import { usePointerDrag } from '../hooks/usePointerDrag';
@@ -25,7 +25,14 @@ export function NoteCard({
   onDragOverTrashChange,
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
+  // Notes are draggable by default; double-click enters edit mode, blur exits.
+  const [editing, setEditing] = useState(false);
+
+  useEffect(() => {
+    if (editing) textRef.current?.focus();
+  }, [editing]);
 
   // During a drag, position/size updates go straight to the DOM via this ref;
   // reducer state is committed once on release, so the notes array does not
@@ -73,10 +80,15 @@ export function NoteCard({
     },
   });
 
+  const exitEditing = () => {
+    setEditing(false);
+    onTextChange(textRef.current?.textContent ?? '');
+  };
+
   return (
     <div
       ref={ref}
-      className={`note${dragging ? ' dragging' : ''}`}
+      className={`note${dragging ? ' dragging' : ''}${editing ? ' editing' : ''}`}
       style={{
         left: note.x,
         top: note.y,
@@ -85,17 +97,16 @@ export function NoteCard({
         zIndex: note.z,
         background: `var(--note-${note.color})`,
       }}
-      onPointerDown={startMove}
+      onPointerDown={editing ? undefined : startMove}
+      onDoubleClick={() => setEditing(true)}
     >
       <div
+        ref={textRef}
         className="note-text"
-        contentEditable
+        contentEditable={editing}
         suppressContentEditableWarning
-        onPointerDown={(e) => {
-          e.stopPropagation();
-          onBringToFront();
-        }}
-        onBlur={(e) => onTextChange(e.currentTarget.textContent ?? '')}
+        onPointerDown={editing ? (e) => e.stopPropagation() : undefined}
+        onBlur={exitEditing}
       >
         {note.text}
       </div>

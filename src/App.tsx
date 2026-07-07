@@ -30,12 +30,29 @@ export default function App() {
     return () => clearTimeout(t);
   }, [state, repository]);
 
+  // Shelf placement: cascade across the viewport's safe region (clear of
+  // toolbar and trash), wrap to a new row at the right edge, small jitter
+  // so placement reads as human rather than mechanical.
   const createNote = () => {
-    const offset = (state.notes.length % 8) * 28;
+    const margin = 24;
+    const topSafe = 88;
+    const bottomSafe = 120;
+    const stepX = NOTE_DEFAULTS.width + 32;
+    const stepY = 72;
+    const cols = Math.max(
+      1,
+      Math.floor((window.innerWidth - margin * 2 - NOTE_DEFAULTS.width) / stepX) + 1
+    );
+    const rows = Math.max(
+      1,
+      Math.floor((window.innerHeight - topSafe - bottomSafe - NOTE_DEFAULTS.height) / stepY) + 1
+    );
+    const i = state.notes.length % (cols * rows);
+    const jitter = () => Math.round(Math.random() * 20 - 10);
     const note: Note = {
       id: crypto.randomUUID(),
-      x: 120 + offset,
-      y: 100 + offset,
+      x: Math.max(margin, margin + (i % cols) * stepX + jitter()),
+      y: Math.max(topSafe, topSafe + Math.floor(i / cols) * stepY + jitter()),
       width: NOTE_DEFAULTS.width,
       height: NOTE_DEFAULTS.height,
       z: nextZ(state.notes),
