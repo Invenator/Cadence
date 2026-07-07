@@ -1,0 +1,209 @@
+:root {
+  --canvas-bg: #f4f5f7;
+  --canvas-dot: #d9dce3;
+  --ink: #253044;
+  --ink-soft: #5e6c84;
+  --surface: #ffffff;
+  --border: #dfe1e6;
+  --danger: #de350b;
+  --danger-soft: #ffebe6;
+
+  --note-sun: #ffe97f;
+  --note-mint: #b5ecd4;
+  --note-sky: #b3d4ff;
+  --note-rose: #ffc9d4;
+  --note-lilac: #dcc9f7;
+  --note-sand: #ffd9a8;
+
+  --shadow-rest: 0 1px 2px rgba(9, 30, 66, 0.12), 0 0 1px rgba(9, 30, 66, 0.18);
+  --shadow-lift: 0 8px 20px rgba(9, 30, 66, 0.22), 0 2px 4px rgba(9, 30, 66, 0.14);
+  --radius: 6px;
+
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: var(--ink);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+.canvas {
+  position: fixed;
+  inset: 0;
+  background-color: var(--canvas-bg);
+  background-image: radial-gradient(var(--canvas-dot) 1px, transparent 1px);
+  background-size: 24px 24px;
+  overflow: hidden;
+}
+
+.toolbar {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-rest);
+  z-index: 10000;
+}
+
+.toolbar button.new-note {
+  font: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ink);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px 14px;
+  cursor: pointer;
+}
+
+.toolbar button.new-note:hover {
+  background: var(--canvas-bg);
+}
+
+.swatches {
+  display: flex;
+  gap: 6px;
+}
+
+.swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid rgba(9, 30, 66, 0.15);
+  cursor: pointer;
+  padding: 0;
+}
+
+.swatch.selected {
+  outline: 2px solid var(--ink);
+  outline-offset: 1px;
+}
+
+.note {
+  position: absolute;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-rest);
+  cursor: grab;
+  transition: box-shadow 120ms ease, transform 120ms ease;
+  touch-action: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.note.dragging {
+  cursor: grabbing;
+  box-shadow: var(--shadow-lift);
+  transform: rotate(1.2deg) scale(1.02);
+  transition: none;
+  z-index: 9999 !important;
+}
+
+.note-text {
+  flex: 1;
+  padding: 12px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--ink);
+  overflow: hidden;
+  overflow-wrap: break-word;
+  outline: none;
+  cursor: text;
+}
+
+.note-text:empty::before {
+  content: 'Write something…';
+  color: rgba(37, 48, 68, 0.38);
+}
+
+.resize-handle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 18px;
+  height: 18px;
+  cursor: nwse-resize;
+  opacity: 0;
+  transition: opacity 100ms ease;
+  touch-action: none;
+}
+
+.resize-handle::after {
+  content: '';
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid rgba(9, 30, 66, 0.35);
+  border-bottom: 2px solid rgba(9, 30, 66, 0.35);
+  border-bottom-right-radius: 3px;
+}
+
+.note:hover .resize-handle {
+  opacity: 1;
+}
+
+.trash-zone {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: 1.5px dashed var(--border);
+  border-radius: 10px;
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.7);
+  opacity: 0.55;
+  transition: all 140ms ease;
+  z-index: 9998;
+}
+
+.trash-zone.armed {
+  opacity: 1;
+  border-color: var(--danger);
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.trash-zone.hot {
+  transform: translateX(-50%) scale(1.08);
+  border-style: solid;
+}
+
+.status-pill {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--ink-soft);
+  box-shadow: var(--shadow-rest);
+  z-index: 9998;
+}
+
+.status-pill.error {
+  color: var(--danger);
+  border-color: var(--danger);
+}
