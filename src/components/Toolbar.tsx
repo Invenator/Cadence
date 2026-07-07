@@ -10,6 +10,14 @@ interface Props {
 export function Toolbar({ activeColor, onColorChange, onNewNote }: Props) {
   return (
     <div className="toolbar">
+      <div className="wordmark">
+        <svg className="wordmark-glyph" viewBox="0 0 14 14" aria-hidden="true">
+          <rect x="1" y="8" width="3" height="5" rx="1" />
+          <rect x="5.5" y="5" width="3" height="8" rx="1" />
+          <rect x="10" y="1" width="3" height="12" rx="1" />
+        </svg>
+        Cadence
+      </div>
       <button className="new-note" onClick={onNewNote}>
         + New note
       </button>
