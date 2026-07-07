@@ -2,7 +2,7 @@
 
 A sticky-notes canvas built for Tempo's Cloud-Native Developer take-home assessment.
 
-**Live demo:** _add Vercel/Netlify link here after deploying_
+**Live demo:** [tempo-solutions-cadence.vercel.app](https://tempo-solutions-cadence.vercel.app/)
 
 ## Why "Cadence"
 
